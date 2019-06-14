@@ -15,7 +15,7 @@ App = React.createClass({
 	    this.setState({
 	      loading: true  
 	    });
-	    this.getGif(searchingText, function(gif) {  
+	    this.getGif(searchingText).then(gif => {  
 	      this.setState({ 
 	        loading: false, 
 	        gif: gif, 
@@ -25,8 +25,7 @@ App = React.createClass({
 	},
 
 	getGif: function(searchingText, callback) {
-		return new Promise(
-			function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 		    const url = prefix + GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;  
 		    const xhr = new XMLHttpRequest();
 		    xhr.open('GET', url);
@@ -37,9 +36,12 @@ App = React.createClass({
 		                url: data.fixed_width_downsampled_url,
 		                sourceUrl: data.url
 		            };
-		            callback(gif);
+		            resolve(gif);
+		    	} else {
+		    		reject('Wystąpił błąd!');
 		    	}
 		    }
+		    xhr.send();
 		});
 	},
 
